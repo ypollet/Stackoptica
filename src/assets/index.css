@@ -1,0 +1,11 @@
+/* Theme, fonts and the core components come from @optica/core */
+@import '@optica/core/assets/index.css';
+
+/* brand colours of Stackoptica */
+:root {
+  --brand: hsl(193 70% 12%);
+}
+
+.dark {
+  --brand: hsl(193 100% 91%);
+}
