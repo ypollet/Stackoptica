@@ -6,7 +6,7 @@ import { DistanceList } from '@optica/core/ui/distance'
 import { Label } from '@optica/core/ui/label'
 import { LandmarkList } from '@optica/core/ui/landmark'
 import { Slider } from '@optica/core/ui/slider'
-import { ThumbnailViewer } from '@optica/core/ui/thumbnail-viewer'
+import { ImageOverview } from '@optica/core/ui/image-overview'
 import { ToggleImage } from '@optica/core/ui/toggle-image'
 import { useImagesStore } from '@/lib/stores'
 import { vectorToString } from '@optica/core'
@@ -30,15 +30,9 @@ function selectImage(value: string | undefined) {
 
 <template>
   <div class="flex flex-col pb-[12px] w-auto h-full">
-    <div v-if="acquisition && selectedImage" class="flex justify-center">
-      <ThumbnailViewer class="w-4/5" :src="selectedImage.thumbnail || selectedImage.image" :alt="selectedImage.label"
-        :size="acquisition.sizeOf()" :zoom-rect="acquisition.camera.zoomRect" />
-    </div>
     <!-- shown image, and its slice while on the stack -->
-    <div v-if="acquisition && selectedImage" class="flex flex-row w-full justify-center items-center space-x-2 pt-4">
-      <Label>{{ selectedImage.label }}</Label>
-      <Label v-if="imagesStore.onStack">{{ acquisition.index + 1 }}/{{ acquisition.images.length }}</Label>
-    </div>
+    <ImageOverview v-if="acquisition && selectedImage" :image="selectedImage" :size="acquisition.sizeOf()"
+      :camera="acquisition.camera" :counter="imagesStore.onStack ? `${acquisition.index + 1}/${acquisition.images.length}` : undefined" />
     <!-- the stack or one of the images stacked from it -->
     <ToggleImage v-if="acquisition" :items="images" :model-value="acquisition.standalone ?? STACK"
       @update:model-value="selectImage" />
