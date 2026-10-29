@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Project, ProjectImage } from '@optica/core'
+import type { Project, ProjectImage } from 'optica-core'
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({ isLeft: false }),

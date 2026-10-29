@@ -1,4 +1,4 @@
-import { OrthancProvider, ProjectRepository, ProviderFactory, RepositoryFactory } from "@optica/core"
+import { OrthancProvider, ProjectRepository, ProviderFactory, RepositoryFactory } from "optica-core"
 
 // Imported first by main.ts: the stores and components get the repository from the factories.
 // The backend sends the standard payload: one acquisition, the slices and the stacked images.

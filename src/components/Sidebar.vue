@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { AnnotationTabs } from '@optica/core/ui/annotation-tabs'
-import { DistanceList } from '@optica/core/ui/distance'
-import { Label } from '@optica/core/ui/label'
-import { LandmarkList } from '@optica/core/ui/landmark'
-import { Slider } from '@optica/core/ui/slider'
-import { ImageOverview } from '@optica/core/ui/image-overview'
-import { ToggleImage } from '@optica/core/ui/toggle-image'
+import { AnnotationTabs } from 'optica-core/ui/annotation-tabs'
+import { DistanceList } from 'optica-core/ui/distance'
+import { Label } from 'optica-core/ui/label'
+import { LandmarkList } from 'optica-core/ui/landmark'
+import { Slider } from 'optica-core/ui/slider'
+import { ImageOverview } from 'optica-core/ui/image-overview'
+import { ToggleImage } from 'optica-core/ui/toggle-image'
 import { useImagesStore } from '@/lib/stores'
-import { vectorToString } from '@optica/core'
+import { vectorToString } from 'optica-core'
 
 const imagesStore = useImagesStore()
 const { acquisition, annotations, selectedImage } = storeToRefs(imagesStore)

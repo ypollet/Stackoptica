@@ -1,6 +1,6 @@
 # Stackoptica (core)
 
-Stackoptica rebuilt on [`core/`](../core): the viewers, landmark and distance lists, menu, models and data layer come from `@optica/core` and `optica_core`; this folder only keeps what is specific to focus stacks.
+Stackoptica rebuilt on [`core/`](../core): the viewers, landmark and distance lists, menu, models and data layer come from `optica-core` and `optica_core`; this folder only keeps what is specific to focus stacks.
 
 - `app.py`: the `stack.json` adapter of the common API. One acquisition `stack`: the slices (`images`, sorted by depth) and the stacked results (`standaloneImages`, labelled by their key in `Stacked_images`). Positions are computed on the slices only.
 - `src/data/setup.ts`: registers the core `ProjectRepository`, the payload is the standard one.
