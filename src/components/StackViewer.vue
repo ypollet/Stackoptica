@@ -44,12 +44,12 @@ async function move(landmark: Landmark, pos: Coordinates) {
     return
   }
   landmark.setPose(selectedImage.value, pos)
-  landmark.setPosition(await repository.computeLandmarkPosition(imagesStore.objectPath, landmark.pose))
+  landmark.position = await repository.computeLandmarkPosition(imagesStore.objectPath, landmark.pose)
 }
 </script>
 
 <template>
-  <ProjectLoader :load="loadProject" :query-key="['project', imagesStore.objectPath]">
+  <ProjectLoader :load="loadProject">
     <div v-if="acquisition && annotations && selectedImage" class="w-full h-full flex flex-col items-center">
       <!-- the stacked images can be looked at, the landmarks are placed on the slices -->
       <ImageViewer class="object-fit" :image="selectedImage" :size="acquisition.sizeOf()" :camera="acquisition.camera"

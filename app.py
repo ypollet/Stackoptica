@@ -9,15 +9,16 @@ class StackDataset(Dataset):
 
     def images(self, id):
         stack_file = self.load(id)
+        folder = self.thumbnails_folder(id, stack_file)
         # slices from the lowest to the highest
         slices = sorted(stack_file["stack"], key=lambda name: stack_file["stack"][name]["SlicePosition"][2])
         return project(acquisition(
             "stack",
             size={"width": stack_file["width"], "height": stack_file["height"]},
-            images=[image(name) for name in slices],
+            images=[image(name, hasThumbnail=self.has_thumbnail(folder, name)) for name in slices],
             # the stacked results, labelled by their method
-            standalone_images=[image(name, label) for label, name in stack_file["Stacked_images"].items()],
-            thumbnails=bool(stack_file.get("thumbnails")),
+            standalone_images=[image(name, label, hasThumbnail=self.has_thumbnail(folder, name))
+                               for label, name in stack_file["Stacked_images"].items()],
         ))
 
     # a pixel of a slice -> its position in the stack, only the slices are calibrated
