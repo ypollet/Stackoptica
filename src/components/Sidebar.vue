@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { AnnotationTabs } from 'optica-core/ui/annotation-tabs'
-import { DistanceList } from 'optica-core/ui/distance'
+import { AnnotationsPanel } from 'optica-core/ui/annotations-panel'
 import { Label } from 'optica-core/ui/label'
-import { LandmarkList } from 'optica-core/ui/landmark'
 import { Slider } from 'optica-core/ui/slider'
 import { ImageOverview } from 'optica-core/ui/image-overview'
 import { ToggleImage } from 'optica-core/ui/toggle-image'
@@ -45,24 +43,28 @@ function selectImage(value: string | undefined) {
         </div>
       </div>
       <!-- the annotations of the stack -->
-      <AnnotationTabs v-if="annotations" v-model="annotations.tab">
-        <template #landmarks>
-          <LandmarkList v-model="annotations.landmarks"
-            @activate="(landmark) => acquisition?.select(landmark.pose.image.name)">
-            <template #info="{ landmark }">
-              <Label class="whitespace-nowrap">{{ vectorToString(landmark.position) }}</Label>
-            </template>
-          </LandmarkList>
+      <AnnotationsPanel v-if="annotations" :annotations="annotations"
+        @activate="(landmark) => acquisition?.select(landmark.pose.image.name)">
+        <template #landmark-info="{ landmark }">
+          <Label class="whitespace-nowrap" title="Double click: go to its image"
+            @dblclick.stop="acquisition?.select(landmark.pose.image.name)">
+            {{ vectorToString(landmark.position) }}
+          </Label>
         </template>
-        <template #distances>
-          <DistanceList v-model="annotations.distances" v-model:selected="annotations.selectedDistanceIndex"
-            :annotations="annotations">
-            <template #landmark-info="{ landmark }">
-              <Label class="whitespace-nowrap">{{ vectorToString(landmark.position) }}</Label>
-            </template>
-          </DistanceList>
+        <!-- a box is on one image: double click goes to it -->
+        <template #measure-info="{ annotation }">
+          <Label v-if="annotations.onOneImage(annotation) && annotations.imageOf(annotation)" class="whitespace-nowrap"
+            title="Image on which all the landmarks are placed" @dblclick.stop="acquisition?.select(annotations.imageOf(annotation)!.name)">
+            {{ annotations.imageOf(annotation)!.label }}
+          </Label>
         </template>
-      </AnnotationTabs>
+        <template #measure-landmark-info="{ landmark }">
+          <Label class="whitespace-nowrap" title="Double click: go to its image"
+            @dblclick.stop="acquisition?.select(landmark.pose.image.name)">
+            {{ vectorToString(landmark.position) }}
+          </Label>
+        </template>
+      </AnnotationsPanel>
     </div>
   </div>
 </template>
