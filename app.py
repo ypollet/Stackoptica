@@ -6,31 +6,34 @@ class StackDataset(Dataset):
     """Focus stack of an object: its slices and the images stacked from them (stack.json)."""
 
     manifest = "stack.json"
+    viewer = "stackoptica"
 
     def images(self, id):
-        stack_file = self.load(id)
-        folder = self.thumbnails_folder(id, stack_file)
-        # slices from the lowest to the highest
-        slices = sorted(stack_file["stack"], key=lambda name: stack_file["stack"][name]["SlicePosition"][2])
-        return project(acquisition(
-            "stack",
-            size={"width": stack_file["width"], "height": stack_file["height"]},
-            images=[image(name, hasThumbnail=self.has_thumbnail(folder, name)) for name in slices],
-            # the stacked results, labelled by their method
-            standalone_images=[image(name, label, hasThumbnail=self.has_thumbnail(folder, name))
-                               for label, name in stack_file["Stacked_images"].items()],
-        ))
+        manifest = self.load(id)
+        folder = self.thumbnails_folder(id, manifest)
+        acquisitions = []
+        for stack in manifest["acquisitions"]:
+            # slices from the lowest to the highest
+            slices = sorted(stack["images"], key=lambda entry: entry["z"])
+            acquisitions.append(acquisition(
+                stack["id"],
+                label=stack.get("label"),
+                size=stack["size"],
+                images=[image(entry["file"], entry.get("label"), hasThumbnail=self.has_thumbnail(folder, entry["file"]))
+                        for entry in slices],
+                # the stacked results, labelled by their method
+                standalone_images=[image(entry["file"], entry.get("label"), hasThumbnail=self.has_thumbnail(folder, entry["file"]))
+                                   for entry in stack.get("standaloneImages", [])],
+            ))
+        return project(*acquisitions, unit=manifest["unit"])
 
-    # a pixel of a slice -> its position in the stack, only the slices are calibrated
+    # a pixel of a slice -> its position in the stack, only the slices have a z
     def position(self, id, image_id, x, y):
-        image_data = self.load(id)["stack"].get(image_id)
-        if image_data is None:
+        stack, entry = self.find_image(self.load(id), image_id)
+        if "z" not in entry:
             abort(404)
-        return {
-            "x": x * image_data["PixelRatio"][0] + image_data["SlicePosition"][0],
-            "y": y * image_data["PixelRatio"][1] + image_data["SlicePosition"][1],
-            "z": image_data["SlicePosition"][2],
-        }
+        pixel_size = self.pixel_size(stack, entry) or [1, 1]
+        return {"x": x * pixel_size[0], "y": y * pixel_size[1], "z": entry["z"]}
 
 
 app = create_app(StackDataset, logo="Stackoptica", version="2.1.0")

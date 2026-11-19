@@ -1,0 +1,77 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:optica:stackoptica:manifest:1",
+    "title": "Stackoptica manifest (stack.json), version 1",
+    "description": "Focus stack: its slices, each at its height z, and the images stacked from them. The common fields are in core/api/optica_core/manifest.schema.json.",
+    "allOf": [
+        {
+            "$ref": "urn:optica:manifest:1"
+        }
+    ],
+    "properties": {
+        "viewer": {
+            "const": "stackoptica"
+        },
+        "acquisitions": {
+            "items": {
+                "$ref": "#/$defs/acquisition"
+            }
+        }
+    },
+    "$defs": {
+        "acquisition": {
+            "description": "The slices (images) and the stacked results (standaloneImages, labelled by their method)",
+            "allOf": [
+                {
+                    "$ref": "urn:optica:manifest:1#/$defs/acquisition"
+                }
+            ],
+            "required": [
+                "images"
+            ],
+            "properties": {
+                "images": {
+                    "items": {
+                        "$ref": "#/$defs/slice"
+                    }
+                },
+                "standaloneImages": {
+                    "items": {
+                        "$ref": "#/$defs/stacked"
+                    }
+                }
+            },
+            "unevaluatedProperties": false
+        },
+        "slice": {
+            "description": "A slice; its own pixelSize if the magnification changed",
+            "allOf": [
+                {
+                    "$ref": "urn:optica:manifest:1#/$defs/image"
+                }
+            ],
+            "required": [
+                "z"
+            ],
+            "properties": {
+                "z": {
+                    "type": "number"
+                }
+            },
+            "unevaluatedProperties": false
+        },
+        "stacked": {
+            "description": "An image stacked from the slices",
+            "allOf": [
+                {
+                    "$ref": "urn:optica:manifest:1#/$defs/image"
+                }
+            ],
+            "required": [
+                "label"
+            ],
+            "properties": {},
+            "unevaluatedProperties": false
+        }
+    }
+}
